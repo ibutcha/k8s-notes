@@ -4,7 +4,7 @@
  
    Common commands:
     - kubectl version --client
-    - kubectl get nodes
+    - kubectl get nodes   // to view the OS-IMAGE column, add `-o wide`
     - kubectl create deployment
     - kubectl expose deployment
     - kubectl get pod

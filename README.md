@@ -1,7 +1,7 @@
 # k8s-notes
  - **Nodes(Minions)** - is a machine (physical or virtual) on which k8s is installed. Also, it's a worker machine wherein k8s container will launch/reside.
  - **Cluster** is a set of nodes that group and connect together.
- - **Master** - is another node on which k8 is installed and configured as a naster. The master is responsible for the actual orchestration of containers on the worker nodes.
+ - **Master** - is another node on which k8 is installed and configured as a naster. The master is responsible for the actual orchestration of containers on the worker nodes.Components
  
  ### K8S Components
  Once you've installed K8s on your system, you're actually installed the following components.
@@ -14,6 +14,8 @@
   - **Controllers** (BRAIN behind orchestration) is responsible for noticing/responding when nodes container's endpoint goes down. It also makes decision to bring up new containers in such case.
   - **Container Runtime** is the underlying software that is used to run container. ex docker, rkt, etc.
   - **kubelet** is the agent run on each node in the cluster. It's responsible for making sure that the containers are running in the nodes as expected.
+  
+  ![k8S components](./images/k8s-nodes-component.jpg "K8S Components Allocation")
  
  - **kubectl**  is the Kubernetes `command-line tool` that allows you to run commands against `Kubernetes clusters`. You can use kubectl to `deploy applications`, `inspect`, `manage cluster resource`s, and `view logs`.
  
@@ -25,7 +27,6 @@
     - kubectl get pod
     - kubectl delete services <service-name>
     - kubectl delete deployment <deployment-name>
-    
   
  - **Minikube** is a `tool` that makes it easy to run Kubernetes locally. Minikube runs a **single-node Kubernetes cluster** inside a Virtual Machine (VM), docker, etc. on your laptop for users looking to try out Kubernetes or develop with it day-to-day.
 

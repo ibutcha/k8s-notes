@@ -12,7 +12,7 @@
   - **etcd** is a distributed key-value store being use by k8s to store all data use to manage the cluster.
   - **Scheduler** is responsible for distributing work or containers across multiple nodes. It looks for newly created containers and assigned to nodes.
   - **Controllers** (BRAIN behind orchestration) is responsible for noticing/responding when nodes container's endpoint goes down. It also makes decision to bring up new containers in such case.
-  - **Container Runtime** is the underlying software that is used to run container. ex docker, containerd, etc.
+  - **Container Runtime** is the underlying software that is used to run container. ex docker, rkt, etc.
   - **kubelet** is the agent run on each node in the cluster. It's responsible for making sure that the containers are running in the nodes as expected.
  
  - **kubectl**  is the Kubernetes `command-line tool` that allows you to run commands against `Kubernetes clusters`. You can use kubectl to `deploy applications`, `inspect`, `manage cluster resource`s, and `view logs`.

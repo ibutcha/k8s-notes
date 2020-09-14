@@ -1,7 +1,15 @@
 # k8s-notes
  - **Nodes(Minions)** - is a machine (physical or virtual) on which k8s is installed. Also, it's a worker machine wherein k8s container will launch/reside.
  - **Cluster** is a set of nodes that group and connect together.
-
+ - **Master** - is another node on which k8 is installed and configured as a naster. The master is responsible for the actual orchestration of containers on the worker nodes.
+ 
+ ### K8S Components
+ 
+ 
+ 
+ 
+ 
+ 
  - **kubectl**  is the Kubernetes `command-line tool` that allows you to run commands against `Kubernetes clusters`. You can use kubectl to `deploy applications`, `inspect`, `manage cluster resource`s, and `view logs`.
  
    Common commands:

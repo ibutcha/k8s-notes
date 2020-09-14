@@ -16,11 +16,14 @@
   - **kubelet** is the agent run on each node in the cluster. It's responsible for making sure that the containers are running in the nodes as expected.
   
   ![k8S components](./images/k8s-nodes-component.jpg "K8S Components Allocation")
+  
+  
  
  - **kubectl**  is the Kubernetes `command-line tool` that allows you to run commands against `Kubernetes clusters`. You can use kubectl to `deploy applications`, `inspect`, `manage cluster resource`s, and `view logs`.
- 
+ pa bigay na lng ung email adpa bigay na lng ung email addressdress
    Common commands:
     - kubectl version --client
+    - kubectl cluster-info
     - kubectl get nodes   // to view the OS-IMAGE column, add `-o wide`
     - kubectl create deployment
     - kubectl expose deployment

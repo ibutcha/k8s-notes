@@ -17,8 +17,7 @@
   
   ![k8S components](./images/k8s-nodes-component.jpg "K8S Components Allocation")
   
-  
- 
+### Tools 
  - **kubectl**  is the Kubernetes `command-line tool` that allows you to run commands against `Kubernetes clusters`. You can use kubectl to `deploy applications`, `inspect`, `manage cluster resource`s, and `view logs`.
  pa bigay na lng ung email adpa bigay na lng ung email addressdress
    Common commands:
@@ -32,6 +31,8 @@
     - kubectl delete deployment <deployment-name>
   
  - **Minikube** is a `tool` that makes it easy to run Kubernetes locally. Minikube runs a **single-node Kubernetes cluster** inside a Virtual Machine (VM), docker, etc. on your laptop for users looking to try out Kubernetes or develop with it day-to-day.
+ 
+ 
 
   Common commands:
    - minikube service <service-name> --url - Get the URL of the exposed `service`, to view the `service` details, remove --url.

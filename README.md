@@ -19,7 +19,6 @@
   
 ### Tools 
  - **kubectl**  is the Kubernetes `command-line tool` that allows you to run commands against `Kubernetes clusters`. You can use kubectl to `deploy applications`, `inspect`, `manage cluster resource`s, and `view logs`.
- pa bigay na lng ung email adpa bigay na lng ung email addressdress
    Common commands:
     - kubectl version --client
     - kubectl cluster-info

@@ -1,7 +1,7 @@
 # k8s-notes
  - **Nodes(Minions)** - is a machine (physical or virtual) on which k8s is installed. Also, it's a worker machine wherein k8s container will launch/reside.
  - **Cluster** is a set of nodes that group and connect together.
- - **Master** - is another node on which k8 is installed and configured as a naster. The master is responsible for the actual orchestration of containers on the worker nodes.Components
+ - **Master** - is another node on which k8 is installed and configured as a master. The master is responsible for the actual orchestration of containers on the worker nodes.Components
  
  ### K8S Components
  Once you've installed K8s on your system, you're actually installed the following components.

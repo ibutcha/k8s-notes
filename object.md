@@ -17,11 +17,10 @@
  - Service - Sets up networking in a K8s cluster.
    - ClusterIP - Exposes a set of pods to other objects in the cluster.
    - NodePort - Exposes a container to the outside world **(Only good for dev purposes!!!)**
-   - LoadBalancer - Legacy way of getting network traffic into a cluster
-   - Ingress - Exposes a set of services to the outside world.
+   - LoadBalancer
+   - Ingress 
 
 
----
 ##### Pods vs Deployments
  - Pods
    - Runs a single set of containers
@@ -46,10 +45,8 @@ Scopes or limit types of objects that we can specify that we want to create with
    - Event
    - Namespace
    - Pod
-   - PersistentVolumeClaim
 
  - apiVersion: apps/v1
    - ControllerRevision
    - StatefulSet
    - Deployment
-

@@ -35,6 +35,12 @@
 
   Common commands:
    - minikube service <service-name> --url - Get the URL of the exposed `service`, to view the `service` details, remove --url.
+     ```bash
+     $ minikube service --url app-service
+     ```
    - minukube start - start minikube and create cluster.
+     ```bash
+     $ minikube start --addons=dashboard --addons=metric-server --addons="ingress" --addons="ingress-dns"
+     ```
    - minikube stop - Stop the local Minikube cluster.
    - minikube delete - Delete the local Minikube cluster.

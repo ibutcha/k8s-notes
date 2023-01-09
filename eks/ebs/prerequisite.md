@@ -70,7 +70,7 @@
 
 
 ### Step 3: Deploy Amazon EBS CSI Driver
-*You can install it using [AWS Manage Add-On](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html) or directly to EKS cluster Managment console or manually create it and follow steps below*
+*You can install it using [AWS Manage Add-On](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html) directly to EKS cluster Managment console or manually create it and follow steps below*
 
  - Deploy EBS CSI Driver
    ```bash

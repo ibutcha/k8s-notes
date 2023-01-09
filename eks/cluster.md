@@ -111,7 +111,7 @@ $  eksctl create nodegroup \
     --ssh-access \
     --ssh-public-key=eks \
     --managed \
-    --asg-access \ 
+    --asg-access \
     --external-dns-access \
     --full-ecr-access \
     --appmesh-access \

@@ -130,7 +130,33 @@ NAME                                                STATUS   ROLES    AGE   VERS
 ip-192-168-32-189.ap-southeast-1.compute.internal   Ready    <none>   18m   v1.24.7-eks-fb459a0   192.168.32.189   54.179.130.81   Amazon Linux 2   5.4.226-129.415.amzn2.x86_64   containerd://1.6.6
 ```
 
-### Step 5: Terminate NodeGroup & Cluster
+### Step 5: Create Node Group in Private Subnets
+
+Key option for the command is `--node-private-networking`
+```bash
+ eksctl create nodegroup \
+    --cluster=app-cluster \
+    --region=ap-southeast-1 \
+    --name=app-cluster-ng-private1 \
+    --spot \
+    --instance-types=t3.medium \
+    --nodes=1 \
+    --nodes-min=1 \
+    --nodes-max=2 \
+    --node-volume-size=20 \
+    --ssh-access \
+    --ssh-public-key=eks \
+    --managed \
+    --asg-access \
+    --external-dns-access \
+    --full-ecr-access \
+    --appmesh-access \
+    --alb-ingress-access \
+    --node-private-networking
+```
+
+
+### Step 6: Terminate NodeGroup & Cluster
 ```bash
 # Get available clusters
 $ eksctl get clusters

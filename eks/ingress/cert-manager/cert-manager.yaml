@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Downloaded at: https://github.com/jetstack/cert-manager/releases/download/v1.11.0/cert-manager.yaml
 apiVersion: v1
 kind: Namespace
 metadata:

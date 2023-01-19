@@ -11,6 +11,8 @@ Let’s deploy the AWS ALB Ingress controller into our EKS cluster using the ste
     ```
 
  - Create an IAM policy named `AWSLoadBalancerControllerIAMPolicy` to allow the ALB Ingress controller to make AWS API calls on your behalf
+
+    *Note: Make sure that you've IAM OIDC provider associated with cluster. If not, kindly refer to [cluster.md](../cluster.md) at **Step 2: Creating an IAM OIDC provider for your cluster.***
     ```bash
     aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
@@ -87,7 +89,7 @@ Let’s deploy the AWS ALB Ingress controller into our EKS cluster using the ste
     helm repo add eks https://aws.github.io/eks-charts
 
     # Update your local repo to make sure that you have the most recent charts.
-    helm repo Update
+    helm repo update
 
      helm install aws-load-balancer-controller \
         eks/aws-load-balancer-controller \

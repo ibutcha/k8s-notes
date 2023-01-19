@@ -21,7 +21,9 @@ $ eksctl create cluster \
     --name app-cluster \
     --region ap-southeast-1 \
     --version 1.24 \
-    --without-nodegroup
+    --without-nodegroup \
+    --tags "Project=Cap Build,Topic=EKS"
+
     
 # Cluster provisioning takes several minutes. While the cluster is being created, several lines of output appear.
 # The last line of output is similar to the following example line.    
@@ -115,7 +117,8 @@ $  eksctl create nodegroup \
     --external-dns-access \
     --full-ecr-access \
     --appmesh-access \
-    --alb-ingress-access 
+    --alb-ingress-access \
+    --tags "Project=Cap Build,Topic=EKS"
     
 # To Verify, get list NodeGroups in a cluster.
 $ eksctl get nodegroups --cluster=app-cluster
@@ -152,7 +155,8 @@ Key option for the command is `--node-private-networking`
     --full-ecr-access \
     --appmesh-access \
     --alb-ingress-access \
-    --node-private-networking
+    --node-private-networking \
+    --tags "Project=Cap Build,Topic=EKS"
 ```
 
 

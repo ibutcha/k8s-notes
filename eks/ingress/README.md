@@ -1,4 +1,4 @@
-INGRESS CONTROLLER (AWS
+INGRESS CONTROLLER (AWS)
 ---
 
 > Anything within the red triangle is single object in kubernetes which is `ingress`.

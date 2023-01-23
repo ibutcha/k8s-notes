@@ -19,8 +19,15 @@ metadata:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
 
     alb.ingress.kubernetes.io/tags: 'Project=Cap Build,Topic=EKS'
+    # SSL
+    # alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    # alb.ingress.kubernetes.io/certificate-arn: <ARN>
+    # alb.ingress.kubernetes.io/ssl-redirect: '443'
 
-
+    # For creating a Record Set in Route53
+    # Prerequisite:
+    #  External-DNS Controller is Configured & Running
+    external-dns.alpha.kubernetes.io/hostname: k8s.solutions-chapters.click
 spec:
   # 1. If "spec.ingressClassName: my-aws-ingress-class" not specified,
   #     will reference default ingress class on this kubernetes cluster

@@ -1,4 +1,5 @@
-
+External DNS Controller
+---
 ![aws-alb-ssl-ingress-network-diagram](./../../images/aws-alb-ingress-ssl-network-diagram.png)
 
 ### Create IAM Policy
@@ -7,7 +8,7 @@ This IAM policy will allow external-dns pod to add, remove DNS entries (Record S
 ```bash
     aws iam create-policy \
         --policy-name AllowExternalDNSUpdates \
-        --policy-document file://manifest/external-dns-permissions/policy.json
+        --policy-document file://manifest/external-dns-controller/policy.json
 ```
 ```bash
 # Output

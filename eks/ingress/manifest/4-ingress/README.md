@@ -15,7 +15,7 @@ Respective annotation alb.ingress.`kubernetes.io/healthcheck-path:` will be move
 ### SSL High-Level Network Diagram
 ![aws-alb-ssl-ingress-network-diagram](./../../../../images/aws-alb-ingress-ssl-network-diagram.png)
 
-To enable this, please follow [this](../../3-external-dns.md)
+To enable this, please follow [3-external-dns-controller](../../3-external-dns-controller.md) & [4-external-dns.md](./../../4-external-dns.md).
 
 ##### References
  - [Ingress Annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/annotations/)

@@ -1,4 +1,4 @@
-Deploy AWS Load Balancer controller
+Deploy AWS Load Balancer Controller
 ---
 Let’s deploy the AWS ALB Ingress controller into our EKS cluster using the steps below.
 

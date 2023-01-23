@@ -1,7 +1,7 @@
 How Kubernetes Ingress works with [aws-alb-ingress-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller)
 ---
 
- ![k8S components](./../../images/aws-alb-ingress-controller.png)
+ ![aws-alb-ingress-controller](./../../images/aws-alb-ingress-controller.png)
 
  The following diagram details the AWS components that the `aws-alb-ingress-controller` creates whenever an Ingress resource is defined by the user. The Ingress resource routes ingress traffic from the ALB to the Kubernetes cluster.
 

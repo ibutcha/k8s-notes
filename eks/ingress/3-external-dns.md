@@ -1,5 +1,5 @@
 
-DIAGRAM
+![aws-alb-ssl-ingress-network-diagram](./../../images/aws-alb-ingress-ssl-network-diagram.png)
 
 ### Create IAM Policy
 This IAM policy will allow external-dns pod to add, remove DNS entries (Record Sets in a Hosted Zone) in AWS Route53 service.

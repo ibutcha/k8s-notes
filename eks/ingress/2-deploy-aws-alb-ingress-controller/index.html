@@ -1,0 +1,1304 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://pages.gitlab.io/sec-robotic-process-automation/sec-rpa-opdash/opdash/eks/ingress/2-deploy-aws-alb-ingress-controller/">
+      
+      
+        <link rel="prev" href="../1-how-it-works/">
+      
+      
+        <link rel="next" href="../3-external-dns-controller/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>2 deploy aws alb ingress controller - Kubernetes Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deploy-aws-load-balancer-controller" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Kubernetes Notes" class="md-header__button md-logo" aria-label="Kubernetes Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kubernetes Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2 deploy aws alb ingress controller
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Kubernetes Notes" class="md-nav__button md-logo" aria-label="Kubernetes Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Kubernetes Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Welcome to MkDocs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+          Eks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Eks" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Eks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster/" class="md-nav__link">
+        EKS Cluster
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Ebs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Ebs" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Ebs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ebs/ebs/" class="md-nav__link">
+        Ebs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ebs/prerequisite/" class="md-nav__link">
+        Prerequisite
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="true">
+          Ingress
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Ingress" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Ingress
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-how-it-works/" class="md-nav__link">
+        1 how it works
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          2 deploy aws alb ingress controller
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        2 deploy aws alb ingress controller
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#deploy-aws-load-balancer-controller" class="md-nav__link">
+    Deploy AWS Load Balancer Controller
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy AWS Load Balancer Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    Prerequisite
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-service-account-with-iam-role-permissions-for-the-aws-load-balancer-controller" class="md-nav__link">
+    Create Service Account with IAM Role &amp; Permissions for the AWS Load Balancer Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-the-aws-load-balancer-controller" class="md-nav__link">
+    Deploy the AWS Load Balancer Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-a-sample-application-to-test-the-aws-load-balancer-controller" class="md-nav__link">
+    Deploy a sample application to test the AWS Load Balancer Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uninstall-all-resources-created" class="md-nav__link">
+    Uninstall all resources created.
+  </a>
+  
+    <nav class="md-nav" aria-label="Uninstall all resources created.">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3-external-dns-controller/" class="md-nav__link">
+        3 external dns controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4-external-dns/" class="md-nav__link">
+        4 external dns
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4_6" type="checkbox" id="__nav_2_4_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4_6" tabindex="0" aria-expanded="false">
+          Manifest
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Manifest" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_4_6">
+          <span class="md-nav__icon md-icon"></span>
+          Manifest
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4_6_1" type="checkbox" id="__nav_2_4_6_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4_6_1" tabindex="0" aria-expanded="false">
+          4 ingress
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="4 ingress" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_4_6_1">
+          <span class="md-nav__icon md-icon"></span>
+          4 ingress
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manifest/4-ingress/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Images
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Images" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Images
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../images/ReadMe/" class="md-nav__link">
+        ReadMe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="false">
+          K8s
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="K8s" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          K8s
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/namespace/" class="md-nav__link">
+        Namespace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/object/" class="md-nav__link">
+        Object
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/pods/" class="md-nav__link">
+        Pods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4" tabindex="0" aria-expanded="false">
+          Deployment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deployment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_4">
+          <span class="md-nav__icon md-icon"></span>
+          Deployment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/deployment/1-creation/" class="md-nav__link">
+        1 creation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/deployment/2-update/" class="md-nav__link">
+        2 update
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/deployment/3-rollback/" class="md-nav__link">
+        3 rollback
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../k8s/deployment/Readme/" class="md-nav__link">
+        Readme
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#deploy-aws-load-balancer-controller" class="md-nav__link">
+    Deploy AWS Load Balancer Controller
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy AWS Load Balancer Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    Prerequisite
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-service-account-with-iam-role-permissions-for-the-aws-load-balancer-controller" class="md-nav__link">
+    Create Service Account with IAM Role &amp; Permissions for the AWS Load Balancer Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-the-aws-load-balancer-controller" class="md-nav__link">
+    Deploy the AWS Load Balancer Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-a-sample-application-to-test-the-aws-load-balancer-controller" class="md-nav__link">
+    Deploy a sample application to test the AWS Load Balancer Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uninstall-all-resources-created" class="md-nav__link">
+    Uninstall all resources created.
+  </a>
+  
+    <nav class="md-nav" aria-label="Uninstall all resources created.">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>2 deploy aws alb ingress controller</h1>
+
+<h2 id="deploy-aws-load-balancer-controller">Deploy AWS Load Balancer Controller</h2>
+<p>Let’s deploy the AWS ALB Ingress controller into our EKS cluster using the steps below.</p>
+<h4 id="prerequisite">Prerequisite</h4>
+<p><em>Note: Make sure that you've IAM OIDC provider associated with cluster. If not, kindly refer to <a href="../../cluster/">cluster.md</a> at </em><em>Step 2: Creating an IAM OIDC provider for your cluster.</em>**</p>
+<h3 id="create-service-account-with-iam-role-permissions-for-the-aws-load-balancer-controller">Create Service Account with IAM Role &amp; Permissions for the AWS Load Balancer Controller</h3>
+<ul>
+<li>
+<p>Create an IAM policy named <code>AWSLoadBalancerControllerIAMPolicy</code> to allow the ALB Ingress controller to make AWS API calls on your behalf
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>aws<span class="w"> </span>iam<span class="w"> </span>create-policy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>--policy-name<span class="w"> </span>AWSLoadBalancerControllerIAMPolicy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>--policy-document<span class="w"> </span>https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># If you want specific version: https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.3.1/docs/install/iam_policy.json</span>
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Output</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;Policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;PolicyName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWSLoadBalancerControllerIAMPolicy&quot;</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;PermissionsBoundaryUsageCount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="nt">&quot;CreateDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-01-13T07:40:01Z&quot;</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="nt">&quot;AttachmentCount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="nt">&quot;IsAttachable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="nt">&quot;PolicyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ANPAXE26SPP7QVXKG6HOK&quot;</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="nt">&quot;DefaultVersionId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v1&quot;</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="nt">&quot;Path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="nt">&quot;Arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:iam::491435228159:policy/AWSLoadBalancerControllerIAMPolicy&quot;</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="nt">&quot;UpdateDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-01-13T07:40:01Z&quot;</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
+</code></pre></div>
+    Record the <code>Policy.Arn</code> in the command output, you will need it in the next step </p>
+</li>
+<li>
+<p>Create a <code>Kubernetes service account</code> and an <code>IAM role</code> (for the pod running the AWS ALB Ingress controller) by substituting <code>$PolicyARN</code> with the recorded value from the previous step:
+    ```bash
+   eksctl create iamserviceaccount \
+       --cluster=app-cluster \
+       --namespace=kube-system \
+       --name=aws-load-balancer-controller \
+       --role-name=AWSLoadBalancerControllerIAMRole \
+       --attach-policy-arn=arn:aws:iam::491435228159:policy/AWSLoadBalancerControllerIAMPolicy \
+       --override-existing-serviceaccounts \
+       --approve \
+       --tags "Project=Cap Build,Topic=EKS"
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>```bash
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a># Output
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>2023-01-19 17:55:14 [ℹ]  1 iamserviceaccount (kube-system/aws-load-balancer-controller) was included (based on the include/exclude rules)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>2023-01-19 17:55:14 [!]  metadata of serviceaccounts that exist in Kubernetes will be updated, as --override-existing-serviceaccounts was set
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>2023-01-19 17:55:14 [ℹ]  1 task: { 
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    2 sequential sub-tasks: { 
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        create IAM role for serviceaccount &quot;kube-system/aws-load-balancer-controller&quot;,
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        create serviceaccount &quot;kube-system/aws-load-balancer-controller&quot;,
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    } }2023-01-19 17:55:14 [ℹ]  building iamserviceaccount stack &quot;eksctl-app-cluster-addon-iamserviceaccount-kube-system-aws-load-balancer-controller&quot;
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>2023-01-19 17:55:14 [ℹ]  deploying stack &quot;eksctl-app-cluster-addon-iamserviceaccount-kube-system-aws-load-balancer-controller&quot;
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>2023-01-19 17:55:14 [ℹ]  waiting for CloudFormation stack &quot;eksctl-app-cluster-addon-iamserviceaccount-kube-system-aws-load-balancer-controller&quot;
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>2023-01-19 17:55:45 [ℹ]  waiting for CloudFormation stack &quot;eksctl-app-cluster-addon-iamserviceaccount-kube-system-aws-load-balancer-controller&quot;
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>2023-01-19 17:56:42 [ℹ]  waiting for CloudFormation stack &quot;eksctl-app-cluster-addon-iamserviceaccount-kube-system-aws-load-balancer-controller&quot;
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>2023-01-19 17:56:43 [ℹ]  created serviceaccount &quot;kube-system/aws-load-balancer-controller&quot;
+</code></pre></div></p>
+<p>Verify k8s Service Account using kubectl.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>sa<span class="w"> </span>aws-load-balancer-controller<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Name:<span class="w">                </span>aws-load-balancer-controller
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Namespace:<span class="w">           </span>kube-system
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Labels:<span class="w">              </span>app.kubernetes.io/managed-by<span class="o">=</span>eksctl
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Annotations:<span class="w">         </span>eks.amazonaws.com/role-arn:<span class="w"> </span>arn:aws:iam::491435228159:role/AWSLoadBalancerControllerIAMRole
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Image<span class="w"> </span>pull<span class="w"> </span>secrets:<span class="w">  </span>&lt;none&gt;
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Mountable<span class="w"> </span>secrets:<span class="w">   </span>&lt;none&gt;
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Tokens:<span class="w">              </span>&lt;none&gt;
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>Events:<span class="w">              </span>&lt;none&gt;
+</code></pre></div></p>
+</li>
+</ul>
+<h3 id="deploy-the-aws-load-balancer-controller">Deploy the AWS Load Balancer Controller</h3>
+<ul>
+<li>
+<p>Install cert-manager so that you can inject the certificate configuration into the webhooks.</p>
+<blockquote>
+<p><a href="https://github.com/cert-manager/cert-manager">cert-manager</a> adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates.</p>
+</blockquote>
+<p><img alt="cert-manager" src="../../../images/cert-manager.png" />
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Template</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>--validate<span class="o">=</span><span class="nb">false</span><span class="w"> </span>-f<span class="w"> </span>https://github.com/jetstack/cert-manager/releases/download/<span class="nv">$VERSION</span>/cert-manager.yaml
+</code></pre></div>
+   For the <code>$VERSION</code>, you can refer to this <a href="https://github.com/cert-manager/cert-manager/releases">link</a> for the available version. For this tutorial, we'll use <code>v1.11.0</code>.
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>--validate<span class="o">=</span><span class="nb">false</span><span class="w"> </span>-f<span class="w"> </span>https://github.com/jetstack/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+</code></pre></div>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w"> </span>namespace/cert-manager<span class="w"> </span>created
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io<span class="w"> </span>created
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io<span class="w"> </span>created
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io<span class="w"> </span>created
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io<span class="w"> </span>created
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io<span class="w"> </span>created
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io<span class="w"> </span>created
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w"> </span>serviceaccount/cert-manager-cainjector<span class="w"> </span>created
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w"> </span>serviceaccount/cert-manager<span class="w"> </span>created
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w"> </span>serviceaccount/cert-manager-webhook<span class="w"> </span>created
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w"> </span>configmap/cert-manager-webhook<span class="w"> </span>created
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-cainjector<span class="w"> </span>created
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-issuers<span class="w"> </span>created
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers<span class="w"> </span>created
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificates<span class="w"> </span>created
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-orders<span class="w"> </span>created
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-challenges<span class="w"> </span>created
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim<span class="w"> </span>created
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-view<span class="w"> </span>created
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-edit<span class="w"> </span>created
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-approve:cert-manager-io<span class="w"> </span>created
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificatesigningrequests<span class="w"> </span>created
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/cert-manager-webhook:subjectaccessreviews<span class="w"> </span>created
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-cainjector<span class="w"> </span>created
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-issuers<span class="w"> </span>created
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers<span class="w"> </span>created
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificates<span class="w"> </span>created
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-orders<span class="w"> </span>created
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-challenges<span class="w"> </span>created
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim<span class="w"> </span>created
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-approve:cert-manager-io<span class="w"> </span>created
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificatesigningrequests<span class="w"> </span>created
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/cert-manager-webhook:subjectaccessreviews<span class="w"> </span>created
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a><span class="w"> </span>role.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection<span class="w"> </span>created
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="w"> </span>role.rbac.authorization.k8s.io/cert-manager:leaderelection<span class="w"> </span>created
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="w"> </span>role.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving<span class="w"> </span>created
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a><span class="w"> </span>rolebinding.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection<span class="w"> </span>created
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a><span class="w"> </span>rolebinding.rbac.authorization.k8s.io/cert-manager:leaderelection<span class="w"> </span>created
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a><span class="w"> </span>rolebinding.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving<span class="w"> </span>created
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a><span class="w"> </span>service/cert-manager<span class="w"> </span>created
+<a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a><span class="w"> </span>service/cert-manager-webhook<span class="w"> </span>created
+<a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a><span class="w"> </span>deployment.apps/cert-manager-cainjector<span class="w"> </span>created
+<a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a><span class="w"> </span>deployment.apps/cert-manager<span class="w"> </span>created
+<a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a><span class="w"> </span>deployment.apps/cert-manager-webhook<span class="w"> </span>created
+<a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a><span class="w"> </span>mutatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook<span class="w"> </span>created
+<a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a><span class="w"> </span>validatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook<span class="w"> </span>created
+</code></pre></div></p>
+</li>
+<li>
+<p>Download the manifest file for the AWS Load Balancer Controller from AWS GitHub, run the following command:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Template</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>curl<span class="w"> </span>-Lo<span class="w"> </span>ingress-controller.yaml<span class="w"> </span>https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/<span class="nv">$VERSION</span>/v2_4_1_full.yaml
+</code></pre></div>
+    For this tutorial, we'll use <code>v2.4.6</code> version. Change the <code>$VERSION</code> and <code>v2_4_1</code>_full.yaml based on version. 
+     <code>bash
+    # Will download the content and save it to `ingress-controller.yaml`
+    curl -Lo ingress-controller.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.4.6/v2_4_6_full.yaml</code></p>
+</li>
+<li>Update the following <code>ingress-controller.yaml</code> information.<ul>
+<li>Edit the cluster-name for your cluster. Search for <code>your-cluster-name</code> and replace it with the name of cluster.
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">spec</span><span class="p">:</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">args</span><span class="p">:</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--cluster-name=app-cluster</span><span class="w">       </span><span class="c1"># from your-cluster-name to app-cluster</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--ingress-class=alb</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public.ecr.aws/eks/aws-load-balancer-controller:v2.4.6</span>
+</code></pre></div></li>
+<li>Update only the <code>ServiceAccount</code> section of the file only.
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="w">  </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nt">metadata</span><span class="p">:</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="nt">app.kubernetes.io/component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">controller</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">      </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws-load-balancer-controller</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">   </span><span class="c1"># Add the annotations line,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">   </span><span class="c1"># so it won&#39;t override the created IAM role in the 1st step.    </span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w">       </span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">      </span><span class="nt">eks.amazonaws.com/role-arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::491435228159:role/AWSLoadBalancerControllerIAMRole</span><span class="w">             </span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws-load-balancer-controller</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>Deploy AWS Load Balancer Controller
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>ingress-controller.yaml
+</code></pre></div>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/ingressclassparams.elbv2.k8s.aws<span class="w"> </span>created
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w"> </span>customresourcedefinition.apiextensions.k8s.io/targetgroupbindings.elbv2.k8s.aws<span class="w"> </span>created
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w"> </span>Warning:<span class="w"> </span>resource<span class="w"> </span>serviceaccounts/aws-load-balancer-controller<span class="w"> </span>is<span class="w"> </span>missing<span class="w"> </span>the<span class="w"> </span>kubectl.kubernetes.io/last-applied-configuration<span class="w"> </span>annotation<span class="w"> </span>which<span class="w"> </span>is<span class="w"> </span>required<span class="w"> </span>by<span class="w"> </span>kubectl<span class="w"> </span>apply.<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>should<span class="w"> </span>only<span class="w"> </span>be<span class="w"> </span>used<span class="w"> </span>on<span class="w"> </span>resources<span class="w"> </span>created<span class="w"> </span>declaratively<span class="w"> </span>by<span class="w"> </span>either<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>--save-config<span class="w"> </span>or<span class="w"> </span>kubectl<span class="w"> </span>apply.<span class="w"> </span>The<span class="w"> </span>missing<span class="w"> </span>annotation<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>patched<span class="w"> </span>automatically.
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w"> </span>serviceaccount/aws-load-balancer-controller<span class="w"> </span>configured
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w"> </span>role.rbac.authorization.k8s.io/aws-load-balancer-controller-leader-election-role<span class="w"> </span>created
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w"> </span>clusterrole.rbac.authorization.k8s.io/aws-load-balancer-controller-role<span class="w"> </span>created
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w"> </span>rolebinding.rbac.authorization.k8s.io/aws-load-balancer-controller-leader-election-rolebinding<span class="w"> </span>created
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w"> </span>clusterrolebinding.rbac.authorization.k8s.io/aws-load-balancer-controller-rolebinding<span class="w"> </span>created
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w"> </span>service/aws-load-balancer-webhook-service<span class="w"> </span>created
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w"> </span>deployment.apps/aws-load-balancer-controller<span class="w"> </span>created
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w"> </span>certificate.cert-manager.io/aws-load-balancer-serving-cert<span class="w"> </span>created
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w"> </span>issuer.cert-manager.io/aws-load-balancer-selfsigned-issuer<span class="w"> </span>created
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w"> </span>mutatingwebhookconfiguration.admissionregistration.k8s.io/aws-load-balancer-webhook<span class="w"> </span>created
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w"> </span>validatingwebhookconfiguration.admissionregistration.k8s.io/aws-load-balancer-webhook<span class="w"> </span>created
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w"> </span>ingressclass.networking.k8s.io/alb<span class="w"> </span>created
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify that the aws load controller is installed:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>describe<span class="w"> </span>deployment<span class="w"> </span>aws-load-balancer-controller
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Name:<span class="w">                   </span>aws-load-balancer-controller
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Namespace:<span class="w">              </span>kube-system
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>CreationTimestamp:<span class="w">      </span>Thu,<span class="w"> </span><span class="m">19</span><span class="w"> </span>Jan<span class="w"> </span><span class="m">2023</span><span class="w"> </span><span class="m">18</span>:34:28<span class="w"> </span>+0800
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>Labels:<span class="w">                 </span>app.kubernetes.io/component<span class="o">=</span>controller
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">                        </span>app.kubernetes.io/name<span class="o">=</span>aws-load-balancer-controller
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>Annotations:<span class="w">            </span>deployment.kubernetes.io/revision:<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>Selector:<span class="w">               </span>app.kubernetes.io/component<span class="o">=</span>controller,app.kubernetes.io/name<span class="o">=</span>aws-load-balancer-controller
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>Replicas:<span class="w">               </span><span class="m">1</span><span class="w"> </span>desired<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>updated<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>total<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>available<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>unavailable
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>StrategyType:<span class="w">           </span>RollingUpdate
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>MinReadySeconds:<span class="w">        </span><span class="m">0</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>RollingUpdateStrategy:<span class="w">  </span><span class="m">25</span>%<span class="w"> </span>max<span class="w"> </span>unavailable,<span class="w"> </span><span class="m">25</span>%<span class="w"> </span>max<span class="w"> </span>surge
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>Pod<span class="w"> </span>Template:
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>Labels:<span class="w">           </span>app.kubernetes.io/component<span class="o">=</span>controller
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">                    </span>app.kubernetes.io/name<span class="o">=</span>aws-load-balancer-controller
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>Service<span class="w"> </span>Account:<span class="w">  </span>aws-load-balancer-controller
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>Containers:
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>controller:
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="w">    </span>Image:<span class="w">      </span>public.ecr.aws/eks/aws-load-balancer-controller:v2.4.6
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="w">    </span>Port:<span class="w">       </span><span class="m">9443</span>/TCP
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="w">    </span>Host<span class="w"> </span>Port:<span class="w">  </span><span class="m">0</span>/TCP
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="w">    </span>Args:
+<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="w">    </span>--cluster-name<span class="o">=</span>your-cluster-name
+<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a><span class="w">    </span>--ingress-class<span class="o">=</span>alb
+<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="w">    </span>Limits:
+<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="w">    </span>cpu:<span class="w">     </span>200m
+<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a><span class="w">    </span>memory:<span class="w">  </span>500Mi
+<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a><span class="w">    </span>Requests:
+<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a><span class="w">    </span>cpu:<span class="w">        </span>100m
+<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a><span class="w">    </span>memory:<span class="w">     </span>200Mi
+<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a><span class="w">    </span>Liveness:<span class="w">     </span>http-get<span class="w"> </span>http://:61779/healthz<span class="w"> </span><span class="nv">delay</span><span class="o">=</span>30s<span class="w"> </span><span class="nv">timeout</span><span class="o">=</span>10s<span class="w"> </span><span class="nv">period</span><span class="o">=</span>10s<span class="w"> </span><span class="c1">#success=1 #failure=2</span>
+<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a><span class="w">    </span>Environment:<span class="w">  </span>&lt;none&gt;
+<a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a><span class="w">    </span>Mounts:
+<a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="w">    </span>/tmp/k8s-webhook-server/serving-certs<span class="w"> </span>from<span class="w"> </span>cert<span class="w"> </span><span class="o">(</span>ro<span class="o">)</span>
+<a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a>Volumes:
+<a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a>cert:
+<a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a><span class="w">    </span>Type:<span class="w">               </span>Secret<span class="w"> </span><span class="o">(</span>a<span class="w"> </span>volume<span class="w"> </span>populated<span class="w"> </span>by<span class="w"> </span>a<span class="w"> </span>Secret<span class="o">)</span>
+<a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a><span class="w">    </span>SecretName:<span class="w">         </span>aws-load-balancer-webhook-tls
+<a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a><span class="w">    </span>Optional:<span class="w">           </span><span class="nb">false</span>
+<a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a>Priority<span class="w"> </span>Class<span class="w"> </span>Name:<span class="w">  </span>system-cluster-critical
+<a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a>Conditions:
+<a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a>Type<span class="w">           </span>Status<span class="w">  </span>Reason
+<a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a>----<span class="w">           </span>------<span class="w">  </span>------
+<a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a>Available<span class="w">      </span>True<span class="w">    </span>MinimumReplicasAvailable
+<a id="__codelineno-14-45" name="__codelineno-14-45" href="#__codelineno-14-45"></a>Progressing<span class="w">    </span>True<span class="w">    </span>NewReplicaSetAvailable
+<a id="__codelineno-14-46" name="__codelineno-14-46" href="#__codelineno-14-46"></a>OldReplicaSets:<span class="w">  </span>&lt;none&gt;
+<a id="__codelineno-14-47" name="__codelineno-14-47" href="#__codelineno-14-47"></a>NewReplicaSet:<span class="w">   </span>aws-load-balancer-controller-7858ff68b9<span class="w"> </span><span class="o">(</span><span class="m">1</span>/1<span class="w"> </span>replicas<span class="w"> </span>created<span class="o">)</span>
+<a id="__codelineno-14-48" name="__codelineno-14-48" href="#__codelineno-14-48"></a>Events:
+<a id="__codelineno-14-49" name="__codelineno-14-49" href="#__codelineno-14-49"></a>Type<span class="w">    </span>Reason<span class="w">             </span>Age<span class="w">    </span>From<span class="w">                   </span>Message
+<a id="__codelineno-14-50" name="__codelineno-14-50" href="#__codelineno-14-50"></a>----<span class="w">    </span>------<span class="w">             </span>----<span class="w">   </span>----<span class="w">                   </span>-------
+<a id="__codelineno-14-51" name="__codelineno-14-51" href="#__codelineno-14-51"></a>Normal<span class="w">  </span>ScalingReplicaSet<span class="w">  </span>3m32s<span class="w">  </span>deployment-controller<span class="w">  </span>Scaled<span class="w"> </span>up<span class="w"> </span>replica<span class="w"> </span><span class="nb">set</span><span class="w"> </span>aws-load-balancer-controller-7858ff68b9<span class="w"> </span>to<span class="w"> </span><span class="m">1</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify AWS Load Balancer Controller Webhook service created
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>aws-load-balancer-webhook-service
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>NAME<span class="w">                                </span>TYPE<span class="w">        </span>CLUSTER-IP<span class="w">      </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">   </span>AGE
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>aws-load-balancer-webhook-service<span class="w">   </span>ClusterIP<span class="w">   </span><span class="m">10</span>.100.38.250<span class="w">   </span>&lt;none&gt;<span class="w">        </span><span class="m">443</span>/TCP<span class="w">   </span>3m27s
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify AWS Load Balancer Controller Logs
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># List Pods</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>aws-load-balancer-controller
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Output</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>aws-load-balancer-controller-7858ff68b9-njdw5<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>5m27s
+</code></pre></div></p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>aws-load-balancer-controller-7858ff68b9-njdw5
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9520242,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;version&quot;</span>,<span class="s2">&quot;GitVersion&quot;</span>:<span class="s2">&quot;v2.4.6&quot;</span>,<span class="s2">&quot;GitCommit&quot;</span>:<span class="s2">&quot;a92e689dfe464f5b24784f398947e0fef31dc470&quot;</span>,<span class="s2">&quot;BuildDate&quot;</span>:<span class="s2">&quot;2023-01-12T06:29:16+0000&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9800384,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.metrics&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;metrics server is starting to listen&quot;</span>,<span class="s2">&quot;addr&quot;</span>:<span class="s2">&quot;:8080&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.984325,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;setup&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;adding health check for controller&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9844737,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.webhook&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;registering webhook&quot;</span>,<span class="s2">&quot;path&quot;</span>:<span class="s2">&quot;/mutate-v1-pod&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9845953,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.webhook&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;registering webhook&quot;</span>,<span class="s2">&quot;path&quot;</span>:<span class="s2">&quot;/mutate-elbv2-k8s-aws-v1beta1-targetgroupbinding&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9847312,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.webhook&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;registering webhook&quot;</span>,<span class="s2">&quot;path&quot;</span>:<span class="s2">&quot;/validate-elbv2-k8s-aws-v1beta1-targetgroupbinding&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9850075,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.webhook&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;registering webhook&quot;</span>,<span class="s2">&quot;path&quot;</span>:<span class="s2">&quot;/validate-networking-v1-ingress&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596695.9851177,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;setup&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;starting podInfo repo&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>I0113<span class="w"> </span><span class="m">07</span>:58:17.985462<span class="w">       </span><span class="m">1</span><span class="w"> </span>leaderelection.go:243<span class="o">]</span><span class="w"> </span>attempting<span class="w"> </span>to<span class="w"> </span>acquire<span class="w"> </span>leader<span class="w"> </span>lease<span class="w"> </span>kube-system/aws-load-balancer-controller-leader...
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596697.9858274,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;starting metrics server&quot;</span>,<span class="s2">&quot;path&quot;</span>:<span class="s2">&quot;/metrics&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596697.9858983,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.webhook.webhooks&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;starting webhook server&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596697.9862094,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.certwatcher&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;Updated current TLS certificate&quot;</span><span class="o">}</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596697.9862907,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.webhook&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;serving webhook server&quot;</span>,<span class="s2">&quot;host&quot;</span>:<span class="s2">&quot;&quot;</span>,<span class="s2">&quot;port&quot;</span>:9443<span class="o">}</span>
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;info&quot;</span>,<span class="s2">&quot;ts&quot;</span>:1673596697.986575,<span class="s2">&quot;logger&quot;</span>:<span class="s2">&quot;controller-runtime.certwatcher&quot;</span>,<span class="s2">&quot;msg&quot;</span>:<span class="s2">&quot;Starting certificate watcher&quot;</span><span class="o">}</span>
+</code></pre></div></p>
+</li>
+</ul>
+<h3 id="deploy-a-sample-application-to-test-the-aws-load-balancer-controller">Deploy a sample application to test the AWS Load Balancer Controller</h3>
+<p>Deploy a sample application to verify that the AWS Load Balancer Controller creates a public Application Load Balancer because of the Ingress object.</p>
+<ul>
+<li>To deploy a game called 2048 as a sample application, run the following command:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/<span class="nv">$VERSION</span>/docs/examples/2048/2048_full.yaml
+</code></pre></div>
+   Note: Replace <code>$VERSION</code> with the version (from the Kubernetes SIGs GitHub site for example <code>v2.4.6</code>) of the AWS Load Balancer Controller that you want to deploy.
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.6/docs/examples/2048/2048_full.yaml
+</code></pre></div>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w"> </span>namespace/game-2048<span class="w"> </span>created
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w"> </span>deployment.apps/deployment-2048<span class="w"> </span>created
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w"> </span>service/service-2048<span class="w"> </span>created
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w"> </span>ingress.networking.k8s.io/ingress-2048<span class="w"> </span>created
+</code></pre></div></li>
+<li>To verify that the Ingress resource was created, wait a few minutes, and then run the following command: 
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingress/ingress-2048<span class="w"> </span>-n<span class="w"> </span>game-2048
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>NAME<span class="w">           </span>CLASS<span class="w">   </span>HOSTS<span class="w">   </span>ADDRESS<span class="w">                                                                      </span>PORTS<span class="w">   </span>AGE
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>ingress-2048<span class="w">   </span>alb<span class="w">     </span>*<span class="w">       </span>k8s-game2048-ingress2-330cc1efad-65913070.ap-southeast-1.elb.amazonaws.com<span class="w">   </span><span class="m">80</span><span class="w">      </span>93s
+</code></pre></div></li>
+<li>If your Ingress isn't created after several minutes, then run the following command to view the AWS Load Balancer Controller logs:  <br />
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w">   </span>deployment.apps/aws-load-balancer-controller
+</code></pre></div>
+   <strong>Note:</strong> AWS Load Balancer Controller logs can show error messages to help you troubleshoot issues with your deployment.</li>
+</ul>
+<h3 id="uninstall-all-resources-created">Uninstall all resources created.</h3>
+<ul>
+<li>Clean up the sample application
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.6/docs/examples/2048/2048_full.yaml
+</code></pre></div></li>
+<li>Remove AWS Load Balancer Controller
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>ingress-controller.yaml
+</code></pre></div></li>
+<li>Remove Cert Manager
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>https://github.com/jetstack/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+</code></pre></div></li>
+<li>Delete K8s IAM Service account
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>eksctl<span class="w"> </span>delete<span class="w"> </span>iamserviceaccount<span class="w"> </span>--cluster<span class="o">=</span>app-cluster<span class="w"> </span>--name<span class="o">=</span>aws-load-balancer-controller<span class="w"> </span>--namespace<span class="o">=</span>kube-system<span class="w">  </span>
+</code></pre></div></li>
+<li>Delete IAM Policy. Don't forget to change AWS ACCOUNT ID: <code>491435228159</code>.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="w"> </span>aws<span class="w"> </span>iam<span class="w"> </span>delete-policy<span class="w"> </span>--policy-arn<span class="o">=</span>arn:aws:iam::491435228159:policy/AWSLoadBalancerControllerIAMPolicy<span class="w">   </span>
+</code></pre></div></li>
+</ul>
+<h4 id="references">References:</h4>
+<ul>
+<li>https://aws.amazon.com/premiumsupport/knowledge-center/eks-alb-ingress-controller-setup/    </li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+    
+  </body>
+</html>

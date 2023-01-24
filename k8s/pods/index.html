@@ -1,0 +1,1255 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://pages.gitlab.io/sec-robotic-process-automation/sec-rpa-opdash/opdash/k8s/pods/">
+      
+      
+        <link rel="prev" href="../object/">
+      
+      
+        <link rel="next" href="../deployment/1-creation/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>Pods - Kubernetes Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pods" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Kubernetes Notes" class="md-header__button md-logo" aria-label="Kubernetes Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kubernetes Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pods
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Kubernetes Notes" class="md-nav__button md-logo" aria-label="Kubernetes Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Kubernetes Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Welcome to MkDocs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="false">
+          Eks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Eks" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Eks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/cluster/" class="md-nav__link">
+        EKS Cluster
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Ebs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Ebs" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Ebs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ebs/ebs/" class="md-nav__link">
+        Ebs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ebs/prerequisite/" class="md-nav__link">
+        Prerequisite
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="false">
+          Ingress
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Ingress" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Ingress
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ingress/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ingress/1-how-it-works/" class="md-nav__link">
+        1 how it works
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ingress/2-deploy-aws-alb-ingress-controller/" class="md-nav__link">
+        2 deploy aws alb ingress controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ingress/3-external-dns-controller/" class="md-nav__link">
+        3 external dns controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ingress/4-external-dns/" class="md-nav__link">
+        4 external dns
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4_6" type="checkbox" id="__nav_2_4_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4_6" tabindex="0" aria-expanded="false">
+          Manifest
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Manifest" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_4_6">
+          <span class="md-nav__icon md-icon"></span>
+          Manifest
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4_6_1" type="checkbox" id="__nav_2_4_6_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4_6_1" tabindex="0" aria-expanded="false">
+          4 ingress
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="4 ingress" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_4_6_1">
+          <span class="md-nav__icon md-icon"></span>
+          4 ingress
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/ingress/manifest/4-ingress/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Images
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Images" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Images
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../images/ReadMe/" class="md-nav__link">
+        ReadMe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="true">
+          K8s
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="K8s" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          K8s
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../namespace/" class="md-nav__link">
+        Namespace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../object/" class="md-nav__link">
+        Object
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Pods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Pods
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pods" class="md-nav__link">
+    PODS
+  </a>
+  
+    <nav class="md-nav" aria-label="PODS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-pod-imperative-approach" class="md-nav__link">
+    Create a Pod (Imperative Approach)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-list-of-pods" class="md-nav__link">
+    Get List of Pods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to-get-more-information" class="md-nav__link">
+    To Get More Information
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-application" class="md-nav__link">
+    Access Application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-pod-logs" class="md-nav__link">
+    Check Pod Logs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-yaml-output-of-pod-service-declarative-approach" class="md-nav__link">
+    Get YAML Output of Pod &amp; Service (Declarative Approach)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4" tabindex="0" aria-expanded="false">
+          Deployment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deployment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_4">
+          <span class="md-nav__icon md-icon"></span>
+          Deployment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/1-creation/" class="md-nav__link">
+        1 creation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/2-update/" class="md-nav__link">
+        2 update
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/3-rollback/" class="md-nav__link">
+        3 rollback
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/Readme/" class="md-nav__link">
+        Readme
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pods" class="md-nav__link">
+    PODS
+  </a>
+  
+    <nav class="md-nav" aria-label="PODS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-pod-imperative-approach" class="md-nav__link">
+    Create a Pod (Imperative Approach)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-list-of-pods" class="md-nav__link">
+    Get List of Pods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to-get-more-information" class="md-nav__link">
+    To Get More Information
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-application" class="md-nav__link">
+    Access Application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-pod-logs" class="md-nav__link">
+    Check Pod Logs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-yaml-output-of-pod-service-declarative-approach" class="md-nav__link">
+    Get YAML Output of Pod &amp; Service (Declarative Approach)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Pods</h1>
+
+<h2 id="pods">PODS</h2>
+<h3 id="create-a-pod-imperative-approach">Create a Pod (Imperative Approach)</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>pod-nginx<span class="w"> </span>--image<span class="w"> </span>butch/sdc-nginx:1.0.0
+</code></pre></div>
+<h3 id="get-list-of-pods">Get List of Pods</h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Output:<span class="w"> </span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>NAME<span class="w">        </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>pod-nginx<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m17s
+</code></pre></div></p>
+<h3 id="to-get-more-information">To Get More Information</h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>pod-nginx
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Name:<span class="w">         </span>pod-nginx
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Namespace:<span class="w">    </span>default
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Priority:<span class="w">     </span><span class="m">0</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Node:<span class="w">         </span>minikube/192.168.49.2
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Start<span class="w"> </span>Time:<span class="w">   </span>Fri,<span class="w"> </span><span class="m">06</span><span class="w"> </span>Jan<span class="w"> </span><span class="m">2023</span><span class="w"> </span><span class="m">12</span>:29:39<span class="w"> </span>+0800
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Labels:<span class="w">       </span><span class="nv">run</span><span class="o">=</span>pod-nginx
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Annotations:<span class="w">  </span>&lt;none&gt;
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>Status:<span class="w">       </span>Running
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>IP:<span class="w">           </span><span class="m">172</span>.17.0.17
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>IPs:
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span>IP:<span class="w">  </span><span class="m">172</span>.17.0.17
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>Containers:
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span>pod-nginx:
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span>Container<span class="w"> </span>ID:<span class="w">   </span>docker://4cf374fe28c7cfea72e9c9e099de1fcafdf9929e9376d10f90e0a1464d5f654d
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span>Image:<span class="w">          </span>butch/sdc-nginx:1.0.0
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span>Image<span class="w"> </span>ID:<span class="w">       </span>docker-pullable://butch/sdc-nginx@sha256:6550554427248228c13cf8f8a95dac922c142ddb947db938add3d4637a6be9cd
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">    </span>Port:<span class="w">           </span>&lt;none&gt;
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">    </span>Host<span class="w"> </span>Port:<span class="w">      </span>&lt;none&gt;
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">    </span>State:<span class="w">          </span>Running
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">      </span>Started:<span class="w">      </span>Fri,<span class="w"> </span><span class="m">06</span><span class="w"> </span>Jan<span class="w"> </span><span class="m">2023</span><span class="w"> </span><span class="m">12</span>:29:52<span class="w"> </span>+0800
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span>Ready:<span class="w">          </span>True
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">    </span>Restart<span class="w"> </span>Count:<span class="w">  </span><span class="m">0</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">    </span>Environment:<span class="w">    </span>&lt;none&gt;
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">    </span>Mounts:
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">      </span>/var/run/secrets/kubernetes.io/serviceaccount<span class="w"> </span>from<span class="w"> </span>kube-api-access-wljl2<span class="w"> </span><span class="o">(</span>ro<span class="o">)</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>Conditions:
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">  </span>Type<span class="w">              </span>Status
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">  </span>Initialized<span class="w">       </span>True<span class="w"> </span>
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="w">  </span>Ready<span class="w">             </span>True<span class="w"> </span>
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="w">  </span>ContainersReady<span class="w">   </span>True<span class="w"> </span>
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="w">  </span>PodScheduled<span class="w">      </span>True<span class="w"> </span>
+<a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>Volumes:
+<a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="w">  </span>kube-api-access-wljl2:
+<a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a><span class="w">    </span>Type:<span class="w">                    </span>Projected<span class="w"> </span><span class="o">(</span>a<span class="w"> </span>volume<span class="w"> </span>that<span class="w"> </span>contains<span class="w"> </span>injected<span class="w"> </span>data<span class="w"> </span>from<span class="w"> </span>multiple<span class="w"> </span>sources<span class="o">)</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a><span class="w">    </span>TokenExpirationSeconds:<span class="w">  </span><span class="m">3607</span>
+<a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a><span class="w">    </span>ConfigMapName:<span class="w">           </span>kube-root-ca.crt
+<a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a><span class="w">    </span>ConfigMapOptional:<span class="w">       </span>&lt;nil&gt;
+<a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a><span class="w">    </span>DownwardAPI:<span class="w">             </span><span class="nb">true</span>
+<a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a>QoS<span class="w"> </span>Class:<span class="w">                   </span>BestEffort
+<a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a>Node-Selectors:<span class="w">              </span>&lt;none&gt;
+<a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a>Tolerations:<span class="w">                 </span>node.kubernetes.io/not-ready:NoExecute<span class="w"> </span><span class="nv">op</span><span class="o">=</span>Exists<span class="w"> </span><span class="k">for</span><span class="w"> </span>300s
+<a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a><span class="w">                             </span>node.kubernetes.io/unreachable:NoExecute<span class="w"> </span><span class="nv">op</span><span class="o">=</span>Exists<span class="w"> </span><span class="k">for</span><span class="w"> </span>300s
+<a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a>Events:
+<a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a><span class="w">  </span>Type<span class="w">    </span>Reason<span class="w">     </span>Age<span class="w">    </span>From<span class="w">               </span>Message
+<a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a><span class="w">  </span>----<span class="w">    </span>------<span class="w">     </span>----<span class="w">   </span>----<span class="w">               </span>-------
+<a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a><span class="w">  </span>Normal<span class="w">  </span>Scheduled<span class="w">  </span>4m27s<span class="w">  </span>default-scheduler<span class="w">  </span>Successfully<span class="w"> </span>assigned<span class="w"> </span>default/pod-nginx<span class="w"> </span>to<span class="w"> </span>minikube
+<a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a><span class="w">  </span>Normal<span class="w">  </span>Pulling<span class="w">    </span>4m27s<span class="w">  </span>kubelet<span class="w">            </span>Pulling<span class="w"> </span>image<span class="w"> </span><span class="s2">&quot;butch/sdc-nginx:1.0.0&quot;</span>
+<a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a><span class="w">  </span>Normal<span class="w">  </span>Pulled<span class="w">     </span>4m16s<span class="w">  </span>kubelet<span class="w">            </span>Successfully<span class="w"> </span>pulled<span class="w"> </span>image<span class="w"> </span><span class="s2">&quot;butch/sdc-nginx:1.0.0&quot;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">11</span>.486351163s
+<a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a><span class="w">  </span>Normal<span class="w">  </span>Created<span class="w">    </span>4m15s<span class="w">  </span>kubelet<span class="w">            </span>Created<span class="w"> </span>container<span class="w"> </span>pod-nginx
+<a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a><span class="w">  </span>Normal<span class="w">  </span>Started<span class="w">    </span>4m15s<span class="w">  </span>kubelet<span class="w">            </span>Started<span class="w"> </span>container<span class="w"> </span>pod-nginx
+</code></pre></div></p>
+<h3 id="access-application">Access Application</h3>
+<ul>
+<li>To Access application, we need to create K8s Service.
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>pod<span class="w"> </span>pod-nginx<span class="w"> </span>--type<span class="o">=</span>NodePort<span class="w"> </span>--port<span class="o">=</span><span class="m">80</span><span class="w"> </span>--name<span class="o">=</span>svc-nginx<span class="w"> </span>
+</code></pre></div></li>
+<li>Get Service Info
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>service
+</code></pre></div>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>NAME<span class="w">        </span>TYPE<span class="w">       </span>CLUSTER-IP<span class="w">      </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">        </span>AGE
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>svc-nginx<span class="w">   </span>NodePort<span class="w">   </span><span class="m">10</span>.110.22.228<span class="w">   </span>&lt;none&gt;<span class="w">        </span><span class="m">80</span>:30821/TCP<span class="w">   </span>88s
+</code></pre></div></li>
+<li>Get Public IP of Worker Node 
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-o<span class="w"> </span>wide
+</code></pre></div>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>NAME<span class="w">       </span>STATUS<span class="w">   </span>ROLES<span class="w">           </span>AGE<span class="w">   </span>VERSION<span class="w">   </span>INTERNAL-IP<span class="w">    </span>EXTERNAL-IP<span class="w">   </span>OS-IMAGE<span class="w">             </span>KERNEL-VERSION<span class="w">      </span>CONTAINER-RUNTIME
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>minikube<span class="w">   </span>Ready<span class="w">    </span>control-plane<span class="w">   </span>23d<span class="w">   </span>v1.25.3<span class="w">   </span><span class="m">192</span>.168.49.2<span class="w">   </span>&lt;none&gt;<span class="w">        </span>Ubuntu<span class="w"> </span><span class="m">20</span>.04.5<span class="w"> </span>LTS<span class="w">   </span><span class="m">5</span>.15.0-57-generic<span class="w">   </span>docker://20.10.20
+</code></pre></div></li>
+<li>Access Using Node Public IP + NodePort
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span>-vvv<span class="w"> </span>http://192.168.49.2:30821
+</code></pre></div>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>*<span class="w">   </span>Trying<span class="w"> </span><span class="m">192</span>.168.49.2:30821...
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>*<span class="w"> </span>Connected<span class="w"> </span>to<span class="w"> </span><span class="m">192</span>.168.49.2<span class="w"> </span><span class="o">(</span><span class="m">192</span>.168.49.2<span class="o">)</span><span class="w"> </span>port<span class="w"> </span><span class="m">30821</span><span class="w"> </span><span class="o">(</span><span class="c1">#0)</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>&gt;<span class="w"> </span>GET<span class="w"> </span>/<span class="w"> </span>HTTP/1.1
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>&gt;<span class="w"> </span>Host:<span class="w"> </span><span class="m">192</span>.168.49.2:30821
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>&gt;<span class="w"> </span>User-Agent:<span class="w"> </span>curl/7.81.0
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>&gt;<span class="w"> </span>Accept:<span class="w"> </span>*/*
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>&gt;<span class="w"> </span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>*<span class="w"> </span>Mark<span class="w"> </span>bundle<span class="w"> </span>as<span class="w"> </span>not<span class="w"> </span>supporting<span class="w"> </span>multiuse
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>&lt;<span class="w"> </span>HTTP/1.1<span class="w"> </span><span class="m">200</span><span class="w"> </span>OK
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>&lt;<span class="w"> </span>Server:<span class="w"> </span>nginx/1.18.0
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>&lt;<span class="w"> </span>Date:<span class="w"> </span>Fri,<span class="w"> </span><span class="m">06</span><span class="w"> </span>Jan<span class="w"> </span><span class="m">2023</span><span class="w"> </span><span class="m">04</span>:44:49<span class="w"> </span>GMT
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>&lt;<span class="w"> </span>Content-Type:<span class="w"> </span>text/html
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>&lt;<span class="w"> </span>Content-Length:<span class="w"> </span><span class="m">612</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>&lt;<span class="w"> </span>Last-Modified:<span class="w"> </span>Sun,<span class="w"> </span><span class="m">07</span><span class="w"> </span>Jun<span class="w"> </span><span class="m">2020</span><span class="w"> </span><span class="m">07</span>:48:56<span class="w"> </span>GMT
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>&lt;<span class="w"> </span>Connection:<span class="w"> </span>keep-alive
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>&lt;<span class="w"> </span>ETag:<span class="w"> </span><span class="s2">&quot;5edc9be8-264&quot;</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>&lt;<span class="w"> </span>Accept-Ranges:<span class="w"> </span>bytes
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>&lt;<span class="w"> </span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>&lt;!DOCTYPE<span class="w"> </span>html&gt;
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>&lt;html&gt;
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a>&lt;head&gt;
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>&lt;title&gt;Welcome<span class="w"> </span>to<span class="w"> </span>nginx!&lt;/title&gt;
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>&lt;style&gt;
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="w">    </span>body<span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="w">        </span>width:<span class="w"> </span>35em<span class="p">;</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="w">        </span>margin:<span class="w"> </span><span class="m">0</span><span class="w"> </span>auto<span class="p">;</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="w">        </span>font-family:<span class="w"> </span>Tahoma,<span class="w"> </span>Verdana,<span class="w"> </span>Arial,<span class="w"> </span>sans-serif<span class="p">;</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="w">    </span><span class="o">}</span>
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>&lt;/style&gt;
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>&lt;/head&gt;
+<a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a>&lt;body&gt;
+<a id="__codelineno-11-33" name="__codelineno-11-33" href="#__codelineno-11-33"></a>&lt;h1&gt;Welcome<span class="w"> </span>to<span class="w"> </span>nginx!&lt;/h1&gt;
+<a id="__codelineno-11-34" name="__codelineno-11-34" href="#__codelineno-11-34"></a>&lt;p&gt;If<span class="w"> </span>you<span class="w"> </span>see<span class="w"> </span>this<span class="w"> </span>page,<span class="w"> </span>the<span class="w"> </span>nginx<span class="w"> </span>web<span class="w"> </span>server<span class="w"> </span>is<span class="w"> </span>successfully<span class="w"> </span>installed<span class="w"> </span>and
+<a id="__codelineno-11-35" name="__codelineno-11-35" href="#__codelineno-11-35"></a>working.<span class="w"> </span>Further<span class="w"> </span>configuration<span class="w"> </span>is<span class="w"> </span>required.&lt;/p&gt;
+<a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a>
+<a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a>&lt;p&gt;For<span class="w"> </span>online<span class="w"> </span>documentation<span class="w"> </span>and<span class="w"> </span>support<span class="w"> </span>please<span class="w"> </span>refer<span class="w"> </span>to
+<a id="__codelineno-11-38" name="__codelineno-11-38" href="#__codelineno-11-38"></a>&lt;a<span class="w"> </span><span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://nginx.org/&quot;</span>&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;
+<a id="__codelineno-11-39" name="__codelineno-11-39" href="#__codelineno-11-39"></a>Commercial<span class="w"> </span>support<span class="w"> </span>is<span class="w"> </span>available<span class="w"> </span>at
+<a id="__codelineno-11-40" name="__codelineno-11-40" href="#__codelineno-11-40"></a>&lt;a<span class="w"> </span><span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://nginx.com/&quot;</span>&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;
+<a id="__codelineno-11-41" name="__codelineno-11-41" href="#__codelineno-11-41"></a>
+<a id="__codelineno-11-42" name="__codelineno-11-42" href="#__codelineno-11-42"></a>&lt;p&gt;&lt;em&gt;Thank<span class="w"> </span>you<span class="w"> </span><span class="k">for</span><span class="w"> </span>using<span class="w"> </span>nginx.&lt;/em&gt;&lt;/p&gt;
+<a id="__codelineno-11-43" name="__codelineno-11-43" href="#__codelineno-11-43"></a>&lt;/body&gt;
+<a id="__codelineno-11-44" name="__codelineno-11-44" href="#__codelineno-11-44"></a>&lt;/html&gt;
+<a id="__codelineno-11-45" name="__codelineno-11-45" href="#__codelineno-11-45"></a>*<span class="w"> </span>Connection<span class="w"> </span><span class="c1">#0 to host 192.168.49.2 left intact</span>
+</code></pre></div></li>
+</ul>
+<h3 id="check-pod-logs">Check Pod Logs</h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Normal checking the pods.</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>pod-nginx
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Unfortunately, we&#39;re not sending logs to console, instead check the actual log file.</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pod-nginx<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/var/log/nginx/access.log
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="m">172</span>.17.0.1<span class="w"> </span>-<span class="w"> </span>-<span class="w"> </span><span class="o">[</span><span class="m">06</span>/Jan/2023:04:42:50<span class="w"> </span>+0000<span class="o">]</span><span class="w"> </span><span class="s2">&quot;GET / HTTP/1.1&quot;</span><span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="m">612</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span><span class="s2">&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36&quot;</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="m">172</span>.17.0.1<span class="w"> </span>-<span class="w"> </span>-<span class="w"> </span><span class="o">[</span><span class="m">06</span>/Jan/2023:04:42:50<span class="w"> </span>+0000<span class="o">]</span><span class="w"> </span><span class="s2">&quot;GET /favicon.ico HTTP/1.1&quot;</span><span class="w"> </span><span class="m">404</span><span class="w"> </span><span class="m">555</span><span class="w"> </span><span class="s2">&quot;http://192.168.49.2:30821/&quot;</span><span class="w"> </span><span class="s2">&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36&quot;</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="m">172</span>.17.0.1<span class="w"> </span>-<span class="w"> </span>-<span class="w"> </span><span class="o">[</span><span class="m">06</span>/Jan/2023:04:44:49<span class="w"> </span>+0000<span class="o">]</span><span class="w"> </span><span class="s2">&quot;GET / HTTP/1.1&quot;</span><span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="m">612</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span><span class="s2">&quot;curl/7.81.0&quot;</span>
+</code></pre></div></p>
+<h3 id="get-yaml-output-of-pod-service-declarative-approach">Get YAML Output of Pod &amp; Service (Declarative Approach)</h3>
+<ul>
+<li>Pod: pod-nginx
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Get pod definition YAML output</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>pod-nginx<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>pod-nginx.yaml
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Check pod-nginx.yaml</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>cat<span class="w"> </span>pod-nginx.yaml
+</code></pre></div>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span>apiVersion:<span class="w"> </span>v1
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span>kind:<span class="w"> </span>Pod
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">  </span>metadata:
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span>creationTimestamp:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:39Z&quot;</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span>labels:
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">      </span>run:<span class="w"> </span>pod-nginx
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span>name:<span class="w"> </span>pod-nginx
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">    </span>namespace:<span class="w"> </span>default
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">    </span>resourceVersion:<span class="w"> </span><span class="s2">&quot;222530&quot;</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">    </span>uid:<span class="w"> </span>913212ea-78ac-43e4-becb-434f86e2324c
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">  </span>spec:
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">    </span>containers:
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="w">    </span>-<span class="w"> </span>image:<span class="w"> </span>butch/sdc-nginx:1.0.0
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="w">      </span>imagePullPolicy:<span class="w"> </span>IfNotPresent
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">      </span>name:<span class="w"> </span>pod-nginx
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">      </span>resources:<span class="w"> </span><span class="o">{}</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="w">      </span>terminationMessagePath:<span class="w"> </span>/dev/termination-log
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="w">      </span>terminationMessagePolicy:<span class="w"> </span>File
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="w">      </span>volumeMounts:
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="w">      </span>-<span class="w"> </span>mountPath:<span class="w"> </span>/var/run/secrets/kubernetes.io/serviceaccount
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a><span class="w">        </span>name:<span class="w"> </span>kube-api-access-wljl2
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="w">        </span>readOnly:<span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a><span class="w">    </span>dnsPolicy:<span class="w"> </span>ClusterFirst
+<a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a><span class="w">    </span>enableServiceLinks:<span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a><span class="w">    </span>nodeName:<span class="w"> </span>minikube
+<a id="__codelineno-16-27" name="__codelineno-16-27" href="#__codelineno-16-27"></a><span class="w">    </span>preemptionPolicy:<span class="w"> </span>PreemptLowerPriority
+<a id="__codelineno-16-28" name="__codelineno-16-28" href="#__codelineno-16-28"></a><span class="w">    </span>priority:<span class="w"> </span><span class="m">0</span>
+<a id="__codelineno-16-29" name="__codelineno-16-29" href="#__codelineno-16-29"></a><span class="w">    </span>restartPolicy:<span class="w"> </span>Always
+<a id="__codelineno-16-30" name="__codelineno-16-30" href="#__codelineno-16-30"></a><span class="w">    </span>schedulerName:<span class="w"> </span>default-scheduler
+<a id="__codelineno-16-31" name="__codelineno-16-31" href="#__codelineno-16-31"></a><span class="w">    </span>securityContext:<span class="w"> </span><span class="o">{}</span>
+<a id="__codelineno-16-32" name="__codelineno-16-32" href="#__codelineno-16-32"></a><span class="w">    </span>serviceAccount:<span class="w"> </span>default
+<a id="__codelineno-16-33" name="__codelineno-16-33" href="#__codelineno-16-33"></a><span class="w">    </span>serviceAccountName:<span class="w"> </span>default
+<a id="__codelineno-16-34" name="__codelineno-16-34" href="#__codelineno-16-34"></a><span class="w">    </span>terminationGracePeriodSeconds:<span class="w"> </span><span class="m">30</span>
+<a id="__codelineno-16-35" name="__codelineno-16-35" href="#__codelineno-16-35"></a><span class="w">    </span>tolerations:
+<a id="__codelineno-16-36" name="__codelineno-16-36" href="#__codelineno-16-36"></a><span class="w">    </span>-<span class="w"> </span>effect:<span class="w"> </span>NoExecute
+<a id="__codelineno-16-37" name="__codelineno-16-37" href="#__codelineno-16-37"></a><span class="w">      </span>key:<span class="w"> </span>node.kubernetes.io/not-ready
+<a id="__codelineno-16-38" name="__codelineno-16-38" href="#__codelineno-16-38"></a><span class="w">      </span>operator:<span class="w"> </span>Exists
+<a id="__codelineno-16-39" name="__codelineno-16-39" href="#__codelineno-16-39"></a><span class="w">      </span>tolerationSeconds:<span class="w"> </span><span class="m">300</span>
+<a id="__codelineno-16-40" name="__codelineno-16-40" href="#__codelineno-16-40"></a><span class="w">    </span>-<span class="w"> </span>effect:<span class="w"> </span>NoExecute
+<a id="__codelineno-16-41" name="__codelineno-16-41" href="#__codelineno-16-41"></a><span class="w">      </span>key:<span class="w"> </span>node.kubernetes.io/unreachable
+<a id="__codelineno-16-42" name="__codelineno-16-42" href="#__codelineno-16-42"></a><span class="w">      </span>operator:<span class="w"> </span>Exists
+<a id="__codelineno-16-43" name="__codelineno-16-43" href="#__codelineno-16-43"></a><span class="w">      </span>tolerationSeconds:<span class="w"> </span><span class="m">300</span>
+<a id="__codelineno-16-44" name="__codelineno-16-44" href="#__codelineno-16-44"></a><span class="w">    </span>volumes:
+<a id="__codelineno-16-45" name="__codelineno-16-45" href="#__codelineno-16-45"></a><span class="w">    </span>-<span class="w"> </span>name:<span class="w"> </span>kube-api-access-wljl2
+<a id="__codelineno-16-46" name="__codelineno-16-46" href="#__codelineno-16-46"></a><span class="w">      </span>projected:
+<a id="__codelineno-16-47" name="__codelineno-16-47" href="#__codelineno-16-47"></a><span class="w">        </span>defaultMode:<span class="w"> </span><span class="m">420</span>
+<a id="__codelineno-16-48" name="__codelineno-16-48" href="#__codelineno-16-48"></a><span class="w">        </span>sources:
+<a id="__codelineno-16-49" name="__codelineno-16-49" href="#__codelineno-16-49"></a><span class="w">        </span>-<span class="w"> </span>serviceAccountToken:
+<a id="__codelineno-16-50" name="__codelineno-16-50" href="#__codelineno-16-50"></a><span class="w">            </span>expirationSeconds:<span class="w"> </span><span class="m">3607</span>
+<a id="__codelineno-16-51" name="__codelineno-16-51" href="#__codelineno-16-51"></a><span class="w">            </span>path:<span class="w"> </span>token
+<a id="__codelineno-16-52" name="__codelineno-16-52" href="#__codelineno-16-52"></a><span class="w">        </span>-<span class="w"> </span>configMap:
+<a id="__codelineno-16-53" name="__codelineno-16-53" href="#__codelineno-16-53"></a><span class="w">            </span>items:
+<a id="__codelineno-16-54" name="__codelineno-16-54" href="#__codelineno-16-54"></a><span class="w">            </span>-<span class="w"> </span>key:<span class="w"> </span>ca.crt
+<a id="__codelineno-16-55" name="__codelineno-16-55" href="#__codelineno-16-55"></a><span class="w">              </span>path:<span class="w"> </span>ca.crt
+<a id="__codelineno-16-56" name="__codelineno-16-56" href="#__codelineno-16-56"></a><span class="w">            </span>name:<span class="w"> </span>kube-root-ca.crt
+<a id="__codelineno-16-57" name="__codelineno-16-57" href="#__codelineno-16-57"></a><span class="w">        </span>-<span class="w"> </span>downwardAPI:
+<a id="__codelineno-16-58" name="__codelineno-16-58" href="#__codelineno-16-58"></a><span class="w">            </span>items:
+<a id="__codelineno-16-59" name="__codelineno-16-59" href="#__codelineno-16-59"></a><span class="w">            </span>-<span class="w"> </span>fieldRef:
+<a id="__codelineno-16-60" name="__codelineno-16-60" href="#__codelineno-16-60"></a><span class="w">                </span>apiVersion:<span class="w"> </span>v1
+<a id="__codelineno-16-61" name="__codelineno-16-61" href="#__codelineno-16-61"></a><span class="w">                </span>fieldPath:<span class="w"> </span>metadata.namespace
+<a id="__codelineno-16-62" name="__codelineno-16-62" href="#__codelineno-16-62"></a><span class="w">              </span>path:<span class="w"> </span>namespace
+<a id="__codelineno-16-63" name="__codelineno-16-63" href="#__codelineno-16-63"></a><span class="w">  </span>status:
+<a id="__codelineno-16-64" name="__codelineno-16-64" href="#__codelineno-16-64"></a><span class="w">    </span>conditions:
+<a id="__codelineno-16-65" name="__codelineno-16-65" href="#__codelineno-16-65"></a><span class="w">    </span>-<span class="w"> </span>lastProbeTime:<span class="w"> </span>null
+<a id="__codelineno-16-66" name="__codelineno-16-66" href="#__codelineno-16-66"></a><span class="w">      </span>lastTransitionTime:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:39Z&quot;</span>
+<a id="__codelineno-16-67" name="__codelineno-16-67" href="#__codelineno-16-67"></a><span class="w">      </span>status:<span class="w"> </span><span class="s2">&quot;True&quot;</span>
+<a id="__codelineno-16-68" name="__codelineno-16-68" href="#__codelineno-16-68"></a><span class="w">      </span>type:<span class="w"> </span>Initialized
+<a id="__codelineno-16-69" name="__codelineno-16-69" href="#__codelineno-16-69"></a><span class="w">    </span>-<span class="w"> </span>lastProbeTime:<span class="w"> </span>null
+<a id="__codelineno-16-70" name="__codelineno-16-70" href="#__codelineno-16-70"></a><span class="w">      </span>lastTransitionTime:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:53Z&quot;</span>
+<a id="__codelineno-16-71" name="__codelineno-16-71" href="#__codelineno-16-71"></a><span class="w">      </span>status:<span class="w"> </span><span class="s2">&quot;True&quot;</span>
+<a id="__codelineno-16-72" name="__codelineno-16-72" href="#__codelineno-16-72"></a><span class="w">      </span>type:<span class="w"> </span>Ready
+<a id="__codelineno-16-73" name="__codelineno-16-73" href="#__codelineno-16-73"></a><span class="w">    </span>-<span class="w"> </span>lastProbeTime:<span class="w"> </span>null
+<a id="__codelineno-16-74" name="__codelineno-16-74" href="#__codelineno-16-74"></a><span class="w">      </span>lastTransitionTime:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:53Z&quot;</span>
+<a id="__codelineno-16-75" name="__codelineno-16-75" href="#__codelineno-16-75"></a><span class="w">      </span>status:<span class="w"> </span><span class="s2">&quot;True&quot;</span>
+<a id="__codelineno-16-76" name="__codelineno-16-76" href="#__codelineno-16-76"></a><span class="w">      </span>type:<span class="w"> </span>ContainersReady
+<a id="__codelineno-16-77" name="__codelineno-16-77" href="#__codelineno-16-77"></a><span class="w">    </span>-<span class="w"> </span>lastProbeTime:<span class="w"> </span>null
+<a id="__codelineno-16-78" name="__codelineno-16-78" href="#__codelineno-16-78"></a><span class="w">      </span>lastTransitionTime:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:39Z&quot;</span>
+<a id="__codelineno-16-79" name="__codelineno-16-79" href="#__codelineno-16-79"></a><span class="w">      </span>status:<span class="w"> </span><span class="s2">&quot;True&quot;</span>
+<a id="__codelineno-16-80" name="__codelineno-16-80" href="#__codelineno-16-80"></a><span class="w">      </span>type:<span class="w"> </span>PodScheduled
+<a id="__codelineno-16-81" name="__codelineno-16-81" href="#__codelineno-16-81"></a><span class="w">    </span>containerStatuses:
+<a id="__codelineno-16-82" name="__codelineno-16-82" href="#__codelineno-16-82"></a><span class="w">    </span>-<span class="w"> </span>containerID:<span class="w"> </span>docker://4cf374fe28c7cfea72e9c9e099de1fcafdf9929e9376d10f90e0a1464d5f654d
+<a id="__codelineno-16-83" name="__codelineno-16-83" href="#__codelineno-16-83"></a><span class="w">      </span>image:<span class="w"> </span>butch/sdc-nginx:1.0.0
+<a id="__codelineno-16-84" name="__codelineno-16-84" href="#__codelineno-16-84"></a><span class="w">      </span>imageID:<span class="w"> </span>docker-pullable://butch/sdc-nginx@sha256:6550554427248228c13cf8f8a95dac922c142ddb947db938add3d4637a6be9cd
+<a id="__codelineno-16-85" name="__codelineno-16-85" href="#__codelineno-16-85"></a><span class="w">      </span>lastState:<span class="w"> </span><span class="o">{}</span>
+<a id="__codelineno-16-86" name="__codelineno-16-86" href="#__codelineno-16-86"></a><span class="w">      </span>name:<span class="w"> </span>pod-nginx
+<a id="__codelineno-16-87" name="__codelineno-16-87" href="#__codelineno-16-87"></a><span class="w">      </span>ready:<span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-16-88" name="__codelineno-16-88" href="#__codelineno-16-88"></a><span class="w">      </span>restartCount:<span class="w"> </span><span class="m">0</span>
+<a id="__codelineno-16-89" name="__codelineno-16-89" href="#__codelineno-16-89"></a><span class="w">      </span>started:<span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-16-90" name="__codelineno-16-90" href="#__codelineno-16-90"></a><span class="w">      </span>state:
+<a id="__codelineno-16-91" name="__codelineno-16-91" href="#__codelineno-16-91"></a><span class="w">        </span>running:
+<a id="__codelineno-16-92" name="__codelineno-16-92" href="#__codelineno-16-92"></a><span class="w">          </span>startedAt:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:52Z&quot;</span>
+<a id="__codelineno-16-93" name="__codelineno-16-93" href="#__codelineno-16-93"></a><span class="w">    </span>hostIP:<span class="w"> </span><span class="m">192</span>.168.49.2
+<a id="__codelineno-16-94" name="__codelineno-16-94" href="#__codelineno-16-94"></a><span class="w">    </span>phase:<span class="w"> </span>Running
+<a id="__codelineno-16-95" name="__codelineno-16-95" href="#__codelineno-16-95"></a><span class="w">    </span>podIP:<span class="w"> </span><span class="m">172</span>.17.0.17
+<a id="__codelineno-16-96" name="__codelineno-16-96" href="#__codelineno-16-96"></a><span class="w">    </span>podIPs:
+<a id="__codelineno-16-97" name="__codelineno-16-97" href="#__codelineno-16-97"></a><span class="w">    </span>-<span class="w"> </span>ip:<span class="w"> </span><span class="m">172</span>.17.0.17
+<a id="__codelineno-16-98" name="__codelineno-16-98" href="#__codelineno-16-98"></a><span class="w">    </span>qosClass:<span class="w"> </span>BestEffort
+<a id="__codelineno-16-99" name="__codelineno-16-99" href="#__codelineno-16-99"></a><span class="w">    </span>startTime:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:29:39Z&quot;</span>
+</code></pre></div></li>
+<li>Service: svc-nginx
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Get Service Definition</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>service<span class="w"> </span>svc-nginx<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>svc-nginx.yaml
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Check Service: svc-nginx</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>cat<span class="w">  </span>svc-nginx.yaml
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Output</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span>apiVersion:<span class="w"> </span>v1
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span>kind:<span class="w"> </span>Service
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">  </span>metadata:
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span>creationTimestamp:<span class="w"> </span><span class="s2">&quot;2023-01-06T04:37:33Z&quot;</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">    </span>labels:
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">      </span>run:<span class="w"> </span>pod-nginx
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span>name:<span class="w"> </span>svc-nginx
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">    </span>namespace:<span class="w"> </span>default
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span>resourceVersion:<span class="w"> </span><span class="s2">&quot;222919&quot;</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">    </span>uid:<span class="w"> </span>007ebfe3-6617-4369-ae33-cd362ce270d4
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">  </span>spec:
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">    </span>clusterIP:<span class="w"> </span><span class="m">10</span>.110.22.228
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">    </span>clusterIPs:
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">    </span>-<span class="w"> </span><span class="m">10</span>.110.22.228
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="w">    </span>externalTrafficPolicy:<span class="w"> </span>Cluster
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="w">    </span>internalTrafficPolicy:<span class="w"> </span>Cluster
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="w">    </span>ipFamilies:
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="w">    </span>-<span class="w"> </span>IPv4
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="w">    </span>ipFamilyPolicy:<span class="w"> </span>SingleStack
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a><span class="w">    </span>ports:
+<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="w">    </span>-<span class="w"> </span>nodePort:<span class="w"> </span><span class="m">30821</span>
+<a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a><span class="w">      </span>port:<span class="w"> </span><span class="m">80</span>
+<a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a><span class="w">      </span>protocol:<span class="w"> </span>TCP
+<a id="__codelineno-18-25" name="__codelineno-18-25" href="#__codelineno-18-25"></a><span class="w">      </span>targetPort:<span class="w"> </span><span class="m">80</span>
+<a id="__codelineno-18-26" name="__codelineno-18-26" href="#__codelineno-18-26"></a><span class="w">    </span>selector:
+<a id="__codelineno-18-27" name="__codelineno-18-27" href="#__codelineno-18-27"></a><span class="w">      </span>run:<span class="w"> </span>pod-nginx
+<a id="__codelineno-18-28" name="__codelineno-18-28" href="#__codelineno-18-28"></a><span class="w">    </span>sessionAffinity:<span class="w"> </span>None
+<a id="__codelineno-18-29" name="__codelineno-18-29" href="#__codelineno-18-29"></a><span class="w">    </span>type:<span class="w"> </span>NodePort
+<a id="__codelineno-18-30" name="__codelineno-18-30" href="#__codelineno-18-30"></a><span class="w">  </span>status:
+<a id="__codelineno-18-31" name="__codelineno-18-31" href="#__codelineno-18-31"></a><span class="w">    </span>loadBalancer:<span class="w"> </span><span class="o">{}</span>
+</code></pre></div></li>
+</ul>
+<p>### Clean Up
+ <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>pod-nginx
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># Output: pod &quot;pod-nginx&quot; deleted</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>service<span class="w"> </span>svc-nginx
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Output: service &quot;svc-nginx&quot; deleted</span>
+</code></pre></div></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+    
+  </body>
+</html>
